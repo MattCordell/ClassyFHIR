@@ -22,8 +22,10 @@ namespace ConsoleApplication1
 
             var terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
             var s = terminologyClient.ExpandValueSet(vs);
+            var c = terminologyClient.LookUpCode("396620009");
 
             Console.WriteLine(s.Expansion.Contains.FirstOrDefault().Display);
+            Console.WriteLine(c.Parameter.Where(p => p.Name.Equals("designation")).FirstOrDefault().Part.Where(p => p.Name.Equals("value")).ToString());
 
             Console.WriteLine("Done");
             Console.ReadKey();

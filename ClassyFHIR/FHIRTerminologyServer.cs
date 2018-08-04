@@ -87,7 +87,24 @@ namespace ClassyFHIR
             return (ValueSet)client.TypeOperation<ValueSet>("expand", parameters);            
         }
 
-        public 
+        public Parameters LookUpCode(string id)
+        {
+            //codeParameter.Value = new FhirString(id);
+            //systemParameter.Value = new FhirUri("http://snomed.info/sct");
+
+            var parameters = new Parameters
+            {
+                Parameter = new List<Parameters.ParameterComponent>
+                    {
+                        codeParameter,
+                        systemParameter
+                    }
+            };
+
+            return client.ConceptLookup(new Code(id), new FhirUri("http://snomed.info/sct"));
+
+            //return (Parameters)client.TypeOperation<ValueSet>("lookup", parameters);
+        }
 
 
 
