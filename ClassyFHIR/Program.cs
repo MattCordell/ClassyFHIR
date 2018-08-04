@@ -7,25 +7,28 @@ using Newtonsoft.Json;
 
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
+using ClassyFHIR;
 
 
 namespace ConsoleApplication1
-{
+{    
     class Program
     {
+        const string ServerEndpoint = "https://ontoserver.csiro.au/stu3-latest";
+        const string vs = "http://snomed.info/sct?fhir_vs=ecl/<284666000";
+
         static void Main(string[] args)
         {
 
-            string ba = foo(string yamma);
+            var terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
+            var s = terminologyClient.ExpandValueSet(vs);
+
+            Console.WriteLine(s.Expansion.Contains.FirstOrDefault().Display);
 
             Console.WriteLine("Done");
             Console.ReadKey();
 
         }
 
-        private static string foo(string v, object yamma)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

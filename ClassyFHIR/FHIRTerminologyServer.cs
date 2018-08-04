@@ -8,59 +8,86 @@ using Hl7.Fhir.Model;
 
 namespace ClassyFHIR
 {
-    class FHIRTerminologyServer
+    public class FHIRTerminologyServer
     {
-        public string Endpoint = "https://ontoserver.csiro.au/stu3-latest";
+        public string Endpoint;
         private FhirClient client;
 
+        private Parameters.ParameterComponent valuesetIdParameter;
+        private Parameters.ParameterComponent filterParameter;
+        private Parameters.ParameterComponent countParameter;
+        private Parameters.ParameterComponent systemParameter;
+        private Parameters.ParameterComponent codeParameter;
 
 
-    public FHIRTerminologyServer(string endpoint)
+
+        public FHIRTerminologyServer(string endpoint)
         {
             Endpoint = endpoint;
             client = new FhirClient(endpoint);
+
+            valuesetIdParameter = new Parameters.ParameterComponent { Name = "identifier"};
+            filterParameter = new Parameters.ParameterComponent { Name = "filter" };
+            countParameter = new Parameters.ParameterComponent { Name = "limit" };
+            systemParameter = new Parameters.ParameterComponent { Name = "system" };
+            codeParameter = new Parameters.ParameterComponent { Name = "code" };
+
             //Parameters.ParameterComponent limit = new Parameters.ParameterComponent();
-            
+
         }
 
         public ValueSet ExpandValueSet(string valueSetID)
         {
-
-            //Approach using the more versatile .TypeOperation();
+            valuesetIdParameter.Value = new FhirUri(valueSetID);
+            
             var parameters = new Parameters
             {
                 Parameter = new List<Parameters.ParameterComponent>
                     {
-                        new Parameters.ParameterComponent
-                        {
-                            Name = "identifier",
-                            Value = new FhirUri($"http://snomed.info/sct?fhir_vs=ecl/<284666000")
-                        },
-                        new Parameters.ParameterComponent
-                        {
-                            Name = "filter",
-                            Value = new FhirString("mega")
-                        }
+                        valuesetIdParameter,
                     }
             };
 
-            var result = (ValueSet)client.TypeOperation<ValueSet>("expand", parameters);
-
-
-            Console.WriteLine(result.Expansion.Contains.FirstOrDefault().Display);
-
-            return result;
+            return (ValueSet)client.TypeOperation<ValueSet>("expand", parameters);                       
         }
 
         public ValueSet FilterExpandValueSet(string valueSetID, string searchFilter)
         {
-            throw new NotImplementedException();
+            valuesetIdParameter.Value = new FhirUri(valueSetID);
+            filterParameter.Value = new FhirString(searchFilter);
+
+            var parameters = new Parameters
+            {
+                Parameter = new List<Parameters.ParameterComponent>
+                    {
+                        valuesetIdParameter,
+                        filterParameter
+                    }
+            };
+
+            return (ValueSet)client.TypeOperation<ValueSet>("expand", parameters);            
         }
 
         public ValueSet GetFirstResultFromValueSetExpansion(string valueSetID, string searchFilter)
         {
-            throw new NotImplementedException();
+            valuesetIdParameter.Value = new FhirUri(valueSetID);
+            filterParameter.Value = new FhirString(searchFilter);
+            countParameter.Value = new FhirString("1");
+
+            var parameters = new Parameters
+            {
+                Parameter = new List<Parameters.ParameterComponent>
+                    {
+                        valuesetIdParameter,
+                        filterParameter,
+                        countParameter
+                    }
+            };
+
+            return (ValueSet)client.TypeOperation<ValueSet>("expand", parameters);            
         }
+
+        public 
 
 
 

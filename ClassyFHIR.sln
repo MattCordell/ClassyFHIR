@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassyFHIR", "ClassyFHIR\ClassyFHIR.csproj", "{758356FE-1001-45B5-8697-7EE70F476286}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassyFHIRTests", "ClassyFHIRTests\ClassyFHIRTests.csproj", "{F3F23231-3735-44F9-845C-10C6F6030354}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{758356FE-1001-45B5-8697-7EE70F476286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{758356FE-1001-45B5-8697-7EE70F476286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{758356FE-1001-45B5-8697-7EE70F476286}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3F23231-3735-44F9-845C-10C6F6030354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F23231-3735-44F9-845C-10C6F6030354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3F23231-3735-44F9-845C-10C6F6030354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3F23231-3735-44F9-845C-10C6F6030354}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
