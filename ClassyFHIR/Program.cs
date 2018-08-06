@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using ClassyFHIR;
+using F23.StringSimilarity;
 
 
 namespace ConsoleApplication1
@@ -45,9 +46,9 @@ namespace ConsoleApplication1
             string bar = "lung haematoma";
             //string bar = "lung infection";
 
-            var calculator = new ScoreCalculator();
+            var calculator = new F23.StringSimilarity.Levenshtein();
 
-            var score = calculator.ComputeLevenshteinDistance(foo, bar);
+            var score = calculator.Distance(foo, bar);
 
             Console.WriteLine("Score {0}", score.ToString());
             
