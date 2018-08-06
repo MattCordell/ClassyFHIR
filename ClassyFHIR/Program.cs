@@ -41,18 +41,13 @@ namespace ConsoleApplication1
 
             //}
 
-            string foo = "haematoma lung";
+            string foo = "lung hematoma";
             //string bar = "kidney haematoma";
             string bar = "lung haematoma";
             //string bar = "lung infection";
 
-            var calculator = new F23.StringSimilarity.Levenshtein();
+            new ClassyFHIR_Tools().CompareStringMetrics(foo, bar);
 
-            var score = calculator.Distance(foo, bar);
-
-            Console.WriteLine("Score {0}", score.ToString());
-            
-            
 
             //Console.WriteLine(c.Parameter.Where(p => p.Name.Equals("designation")).Where(part => part.Name.Equals("value")));
 
