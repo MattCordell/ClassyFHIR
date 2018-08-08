@@ -17,29 +17,20 @@ namespace ConsoleApplication1
     {
         const string ServerEndpoint = "https://ontoserver.csiro.au/stu3-latest";
         const string vs = "http://snomed.info/sct?fhir_vs=ecl/<284666000";
-        const string ecl = "http://snomed.info/sct?fhir_vs=ecl/";
-
+        static List<Bucket> bucketList;
+        static FHIRTerminologyServer terminologyClient;
+        static ClassyFHIR_Tools tools = new ClassyFHIR_Tools();   
 
 
         static void Main(string[] args)
         {
-            var bucketList = new List<Bucket>(CreateBucketList());
+            terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
+            bucketList = new List<Bucket>(CreateBucketList());
+            var problemList = new string[] { "heart murmur","oral candida", "mouth ulcer", "open femoral fracture", "acute anxiety", "hemilateral palsy", };
 
-            //validate bucket definitions
-                      
-            var terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
+            //TO DO validate bucket definitions            
 
-            foreach (var item in bucketList)
-            {
-                var searchResult = terminologyClient.GetFirstResultFromValueSetExpansion(ecl+item.definition, "heart");
-                var numOfResults = searchResult.Expansion.Total;
-                //var topCode = searchResult.Expansion.Contains.FirstOrDefault().Code;
-
-                var bestTerm = searchResult.Expansion.Contains.FirstOrDefault().Display;
-                Console.WriteLine("{0} : {1} results, Best match = {2}",item.name,numOfResults,bestTerm);
-            }
-
-
+            AnalyseProblem(problemList[0]);          
 
             //var synonyms = terminologyClient.LookUpCode(topCode).GetSynonyms();
 
@@ -56,6 +47,27 @@ namespace ConsoleApplication1
             Console.WriteLine("Done");
             Console.ReadKey();
 
+        }
+
+        private static void AnalyseProblem(string problem)
+        {
+            foreach (var bucket in bucketList)
+            {
+                var searchResult = terminologyClient.GetFirstResultFromValueSetExpansion(bucket.definition, problem);
+                var numOfResults = searchResult.Expansion.Total;
+
+                if (numOfResults > 0)
+                {
+                    var topCode = searchResult.Expansion.Contains.FirstOrDefault().Code;
+                    var bestTerm = searchResult.Expansion.Contains.FirstOrDefault().Display;
+
+                    Console.WriteLine("{0} : {1} results scores = {2}", bucket.name, numOfResults, tools.CalculateStringMetric(problem,bestTerm));
+                }
+                else
+                {
+                    Console.WriteLine("{0} : {1} results", bucket.name, numOfResults);
+                }
+            }
         }
 
         private static List<Bucket> CreateBucketList()
