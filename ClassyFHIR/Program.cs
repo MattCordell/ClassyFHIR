@@ -17,44 +17,66 @@ namespace ConsoleApplication1
     {
         const string ServerEndpoint = "https://ontoserver.csiro.au/stu3-latest";
         const string vs = "http://snomed.info/sct?fhir_vs=ecl/<284666000";
+        
 
         static void Main(string[] args)
         {
+            var bucketList = new List<Bucket>(CreateBucketList());
 
-            //var terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
-            //var s = terminologyClient.ExpandValueSet(vs);
-            //var c = terminologyClient.LookUpCode("396620009");
+            //validate bucket definitions
+                      
+            var terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
 
-            ////Console.WriteLine(s.Expansion.Contains.FirstOrDefault().Display);
-            ////Console.WriteLine(c.Parameter.Where(p => p.Name.Equals("designation")).FirstOrDefault().Part.Where(p => p.Name.Equals("value")).ToString());
-            //var designations = c.Parameter.Where(p => p.Name.Equals("designation"));
+            var searchResult = terminologyClient.GetFirstResultFromValueSetExpansion(vs, "Symbio");
+            var topCode = searchResult.Expansion.Contains.FirstOrDefault().Code;           
+            Console.WriteLine(searchResult.Expansion.Contains.FirstOrDefault().Display);
 
-            //var x = designations.Where(p => p.Name == "value");
+            var synonyms = terminologyClient.LookUpCode(topCode).GetSynonyms();
 
+            foreach (var s in synonyms)
+            {
+                Console.WriteLine(s);
+            }
 
-            //var synonyms = new List<string>();
-
-            //foreach (var designation in x)
-            //{
-            //    Console.WriteLine(designation.Part);
-
-
-            //}
-
-            string foo = "lung hematoma";
-            //string bar = "kidney haematoma";
+            string foo = "lung hematoma";            
             string bar = "lung haematoma";
-            //string bar = "lung infection";
-
-            new ClassyFHIR_Tools().CompareStringMetrics(foo, bar);
-
-
-            //Console.WriteLine(c.Parameter.Where(p => p.Name.Equals("designation")).Where(part => part.Name.Equals("value")));
+           
+            //new ClassyFHIR_Tools().CompareStringMetrics(foo, bar);
 
             Console.WriteLine("Done");
             Console.ReadKey();
 
         }
 
+        private static List<Bucket> CreateBucketList()
+        {
+            var _bucketList = new List<Bucket>();
+            
+            //128139000| Inflammatory disorder |
+            _bucketList.Add(new Bucket("Inflammatory (NEC)", "Inflam", "<<128139000 MINUS (<< 118238000 OR << 106048009 OR << 40733004 OR << 74732009 OR <<118940003 OR << 106063007 OR << 399981008 )"));
+            //118238000| Urogenital finding(finding)|
+            _bucketList.Add(new Bucket("Urogenital (excluding infection)", "Urog", "<<118238000 MINUS (<<40733004)"));          
+            //106048009|Respiratory finding (finding)|
+            _bucketList.Add(new Bucket("All Respiratory problems (including infections)", "Respiratory", "<<106048009"));
+            //40733004| Infectious disease(disorder)|
+            _bucketList.Add(new Bucket("Infectious disease (NEC)", "Infect", "<<40733004 MINUS ( << 106048009 OR << 74732009 OR <<118940003  OR << 106063007 OR << 399981008 OR << 106028002)"));
+            
+            //74732009| Mental disorder(disorder)|    
+            _bucketList.Add(new Bucket("Mental illness", "Mental", "<<74732009 MINUS (<<118940003)"));
+            //118940003| Disorder of nervous system (disorder)|
+            _bucketList.Add(new Bucket("Neurological disorder", "Neurolo", "<<118940003"));
+
+            //106063007| Cardiovascular finding(finding)|
+            _bucketList.Add(new Bucket("Cardiovascular problems (excluding Neoplasms)", "Cardio", "<<106063007 MINUS (<<399981008)"));
+
+            //399981008| Neoplasm and / or hamartoma(disorder) |
+            _bucketList.Add(new Bucket("Neoplasms and hamartomas", "NeoHarma", "<<399981008"));
+            //106028002|Musculoskeletal finding (finding)|
+            _bucketList.Add(new Bucket("Orthopedic problems (NEC)", "Orthoped", "<<106028002 MINUS ( << 128139000 OR << 118238000 OR << 106048009 OR << 40733004 OR << 74732009 OR <<118940003 OR << 106063007 OR << 399981008 )"));
+
+            // << 128139000 OR << 118238000 OR << 106048009 OR << 40733004 OR << 74732009 OR <<118940003 OR <<118940003 OR << 106063007 OR << 399981008 OR << 106028002
+
+            return _bucketList;
+        }
     }
 }
