@@ -17,7 +17,9 @@ namespace ConsoleApplication1
     {
         const string ServerEndpoint = "https://ontoserver.csiro.au/stu3-latest";
         const string vs = "http://snomed.info/sct?fhir_vs=ecl/<284666000";
-        
+        const string ecl = "http://snomed.info/sct?fhir_vs=ecl/";
+
+
 
         static void Main(string[] args)
         {
@@ -27,16 +29,24 @@ namespace ConsoleApplication1
                       
             var terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
 
-            var searchResult = terminologyClient.GetFirstResultFromValueSetExpansion(vs, "Symbio");
-            var topCode = searchResult.Expansion.Contains.FirstOrDefault().Code;           
-            Console.WriteLine(searchResult.Expansion.Contains.FirstOrDefault().Display);
-
-            var synonyms = terminologyClient.LookUpCode(topCode).GetSynonyms();
-
-            foreach (var s in synonyms)
+            foreach (var item in bucketList)
             {
-                Console.WriteLine(s);
+                var searchResult = terminologyClient.GetFirstResultFromValueSetExpansion(ecl+item.definition, "heart");
+                var numOfResults = searchResult.Expansion.Total;
+                //var topCode = searchResult.Expansion.Contains.FirstOrDefault().Code;
+
+                var bestTerm = searchResult.Expansion.Contains.FirstOrDefault().Display;
+                Console.WriteLine("{0} : {1} results, Best match = {2}",item.name,numOfResults,bestTerm);
             }
+
+
+
+            //var synonyms = terminologyClient.LookUpCode(topCode).GetSynonyms();
+
+            //foreach (var s in synonyms)
+            //{
+            //    Console.WriteLine(s);
+            //}
 
             string foo = "lung hematoma";            
             string bar = "lung haematoma";
