@@ -28,5 +28,11 @@ namespace ClassyFHIR.Tests
         {
             Assert.Fail();
         }
+
+        [TestMethod()]
+        public void LookUpCodeTest()
+        {
+            Assert.Fail();
+        }
     }
 }

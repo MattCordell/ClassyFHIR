@@ -101,13 +101,28 @@ namespace ClassyFHIR
                     }
             };
 
-
             return client.ConceptLookup(new Code(id), new FhirUri("http://snomed.info/sct"));
 
-            //return (Parameters)client.TypeOperation<ValueSet>("lookup", parameters);
         }
 
-
-
     }
+
+    public static class MyExtensions
+    {
+        public static string[] GetSynonyms(this Parameters parameterResponse)
+        {
+            var designations = parameterResponse.Parameter.Where(p => p.Name.Equals("designation"));
+
+            var synonyms = new List<string>();
+
+            foreach (var designation in designations)
+            {
+                var d = designation.Part.Where(p => p.Name.Equals("value")).FirstOrDefault().Value.ToString();
+                synonyms.Add(d);
+            }
+
+            return synonyms.ToArray();
+        }
+    }
+
 }
