@@ -46,26 +46,28 @@ namespace ClassyFHIR
 
         public void StringMetricHeader()
         {
-            Console.WriteLine("consine	damerau	jaccard	jarodwinkler	levenshtein	lcs	mlcs	ng	nl	osa	qg	sd");
+            Console.WriteLine(@"bucketname   Results consine   damerau jaccard jarodwinkler    levenshtein   lcs mlcs    ng  nl  osa qg  sd");
         }
 
-        public string CalculateStringMetric(string s1, string s2)
+        public string[] CalculateStringMetric(string s1, string s2)
         {
-            var consine = new F23.StringSimilarity.Cosine().Distance(s1, s2);
-            var damerau = new F23.StringSimilarity.Damerau().Distance(s1, s2);
-            var jaccard = new F23.StringSimilarity.Jaccard().Distance(s1, s2);
-            var jarodwinkler = new F23.StringSimilarity.JaroWinkler().Distance(s1, s2);
-            var levenshtein = new F23.StringSimilarity.Levenshtein().Distance(s1, s2);
+            var results = new string[12];
+            
+            results[0] = Math.Round(new F23.StringSimilarity.Cosine().Distance(s1, s2),3).ToString();
+            results[1] = Math.Round(new F23.StringSimilarity.Damerau().Distance(s1, s2),3).ToString();
+            results[2] = Math.Round(new F23.StringSimilarity.Jaccard().Distance(s1, s2),3).ToString();
+            results[3] = Math.Round(new F23.StringSimilarity.JaroWinkler().Distance(s1, s2),3).ToString();
+            results[4] = Math.Round(new F23.StringSimilarity.Levenshtein().Distance(s1, s2),3).ToString();
 
-            var lcs = new F23.StringSimilarity.LongestCommonSubsequence().Distance(s1, s2);
-            var mlcs = new F23.StringSimilarity.MetricLCS().Distance(s1, s2);
-            var ng = new F23.StringSimilarity.NGram().Distance(s1, s2);
-            var nl = new F23.StringSimilarity.NormalizedLevenshtein().Distance(s1, s2);
-            var osa = new F23.StringSimilarity.OptimalStringAlignment().Distance(s1, s2);
-            var qg = new F23.StringSimilarity.QGram().Distance(s1, s2);
-            var sd = new F23.StringSimilarity.SorensenDice().Distance(s1, s2);
-                      
-            return string.Concat(s1, s2, consine, damerau, jaccard, jarodwinkler, levenshtein, lcs, mlcs, ng, nl, osa, qg, sd);
+            results[5] = Math.Round(new F23.StringSimilarity.LongestCommonSubsequence().Distance(s1, s2),3).ToString();
+            results[6] = Math.Round(new F23.StringSimilarity.MetricLCS().Distance(s1, s2),3).ToString();
+            results[7] = Math.Round(new F23.StringSimilarity.NGram().Distance(s1, s2),3).ToString();
+            results[8] = Math.Round(new F23.StringSimilarity.NormalizedLevenshtein().Distance(s1, s2),3).ToString();
+            results[9] = Math.Round(new F23.StringSimilarity.OptimalStringAlignment().Distance(s1, s2),3).ToString();
+            results[10] = Math.Round(new F23.StringSimilarity.QGram().Distance(s1, s2),3).ToString();
+            results[11] = Math.Round(new F23.StringSimilarity.SorensenDice().Distance(s1, s2),3).ToString();
+
+            return results;
         }
 
     }

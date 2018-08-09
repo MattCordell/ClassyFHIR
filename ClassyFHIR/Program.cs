@@ -26,18 +26,18 @@ namespace ConsoleApplication1
         {
             terminologyClient = new FHIRTerminologyServer(ServerEndpoint);
             bucketList = new List<Bucket>(CreateBucketList());
-            var problemList = new string[] { "heart murmur","oral candida", "mouth ulcer", "open femoral fracture", "acute anxiety", "hemilateral palsy", };
+            var problemList = new string[] { "heart murmur","oral candida", "mouth ulcer", "open femoral fracture", "depressive anxiety", "unilateral palsy" };
 
             //TO DO validate bucket definitions            
+            tools.StringMetricHeader();
 
-            AnalyseProblem(problemList[0]);          
+            foreach (var problem in problemList)
+            {
+                AnalyseProblem(problem);
+            }
 
-            //var synonyms = terminologyClient.LookUpCode(topCode).GetSynonyms();
+                   
 
-            //foreach (var s in synonyms)
-            //{
-            //    Console.WriteLine(s);
-            //}
 
             string foo = "lung hematoma";            
             string bar = "lung haematoma";
@@ -51,6 +51,8 @@ namespace ConsoleApplication1
 
         private static void AnalyseProblem(string problem)
         {
+            Console.WriteLine("Problem {0} : ", problem);
+
             foreach (var bucket in bucketList)
             {
                 var searchResult = terminologyClient.GetFirstResultFromValueSetExpansion(bucket.definition, problem);
@@ -59,16 +61,34 @@ namespace ConsoleApplication1
                 if (numOfResults > 0)
                 {
                     var topCode = searchResult.Expansion.Contains.FirstOrDefault().Code;
-                    var bestTerm = searchResult.Expansion.Contains.FirstOrDefault().Display;
+                    //var bestTerm = searchResult.Expansion.Contains.FirstOrDefault().Display;
+                    var synonyms = terminologyClient.LookUpCode(topCode).GetSynonyms();
+                    foreach (var synonym in synonyms)
+                    {
+                        Console.WriteLine("{0}\t{1}\t{2}\t{3}", bucket.name, numOfResults, string.Join("\t", tools.CalculateStringMetric(problem, synonym)), synonym);
+                    }
 
-                    Console.WriteLine("{0} : {1} results scores = {2}", bucket.name, numOfResults, tools.CalculateStringMetric(problem,bestTerm));
+                    
                 }
                 else
                 {
-                    Console.WriteLine("{0} : {1} results", bucket.name, numOfResults);
+                    Console.WriteLine("{0}  {1}", bucket.name, numOfResults);
                 }
             }
         }
+
+//Bucketname Results consine damerau jaccard jarodwinkler    levenshtein lcs mlcs ng  nl osa qg sd
+//Inflammatory(NEC)  0
+//Urogenital(excluding infection)    0
+//All Respiratory problems(including infections) 0
+//Infectious disease(NEC)    0
+//Mental illness	0
+//Neurological disorder	0
+//Cardiovascular problems(excluding Neoplasms)   42	0.083	1	0.2	0.056	1	2	0.083	0.125	0.083	1	2	0.111
+//Neoplasms and hamartomas	0
+//Orthopedic problems(NEC)   0
+
+
 
         private static List<Bucket> CreateBucketList()
         {
